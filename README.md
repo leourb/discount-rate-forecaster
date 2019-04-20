@@ -13,4 +13,4 @@ List of allowable tickers: [!https://www.nasdaq.com/quotes/nasdaq-100-stocks.asp
 
 `python main.py AAPL AMZN FB` ti get the analysis for multiple tickers. There is no limit on the number of tickers in input.
 
-`python main.py --offiline name_of_the_pickle_file` to work with offline data (the pickle file is automatically generated at each online query)
+`python main.py --offline name_of_the_pickle_file` to work with offline data (the pickle file is automatically generated at each online query)
