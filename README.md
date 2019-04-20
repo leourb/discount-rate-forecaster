@@ -1,11 +1,14 @@
-# What this script does
+# discount_rate_forecaster
+
+## What this script does
 
 The script scrapes dividends data from Nasdaq.com, standardize it and then calculates the
 *market implied discount rate* using the _Gordon Growth Model_.
 
 The higher the discount rate, the higher the risk but higher is the expected return (as this implies market data is a remunerated return).
 
-# Usage
+
+## Usage
 
 List of allowable tickers: [!https://www.nasdaq.com/quotes/nasdaq-100-stocks.aspx](here)
 
