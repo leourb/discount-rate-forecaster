@@ -22,8 +22,10 @@ class DataDownloader:
         for ticker in self._tickers:
             self._ticker_being_processed = ticker
             print(f'Getting dividend data for ticker {ticker}...')
-            self._results[self._ticker_being_processed] = self._parse_div_data_from_nasdaq(ticker)
-            time.sleep(2)  # We do not want to make the scraping too aggressive!
+            self._html_downloaded_table = self._parse_div_data_from_nasdaq(ticker)
+            if self._html_downloaded_table is not None:
+                self._results[self._ticker_being_processed] = self._build_json_table(self._html_downloaded_table)
+                time.sleep(2)  # We do not want to make the scraping too aggressive!
         if pickled_name is not None:
             self._write_data_to_pickle(pickled_name)
 
@@ -43,8 +45,7 @@ class DataDownloader:
         except AttributeError:
             print(f'It seems that {ticker} has never paid a dividend. Nothing to download.')
             return None
-        table_to_json = self._build_json_table(parsed_table)
-        return table_to_json
+        return parsed_table
 
     def _get_table_data(self, table_object):
         """
