@@ -15,6 +15,7 @@ class DataDownloader:
         Initialize the class with the input parameters
 
         :param (str|list) tickers: ticker to download and to collect the data from
+        :param str pickled_name: name of the pickled_file to be processed
         """
         self._tickers = tickers
         self._results = dict()
@@ -22,9 +23,9 @@ class DataDownloader:
             self._ticker_being_processed = ticker
             print(f'Getting dividend data for ticker {ticker}...')
             self._results[self._ticker_being_processed] = self._parse_div_data_from_nasdaq(ticker)
+            time.sleep(2)  # We do not want to make the scraping too aggressive!
         if pickled_name is not None:
             self._write_data_to_pickle(pickled_name)
-            time.sleep(2)  # We do not want to make the scraping too aggressive!
 
     def _parse_div_data_from_nasdaq(self, ticker):  # Private function - it should not be called directly
         """
