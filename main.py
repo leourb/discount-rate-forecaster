@@ -13,7 +13,8 @@ if __name__ == "__main__":
     # https://docs.python.org/3/library/__main__.html
     print(f'Executing script {sys.argv[0]} now')
     if len(sys.argv) <= 1:
-        print('No ticker provided. Please call the script like: "python main.py AMZN FB AAPL"')
+        print('No ticker provided. Please call the script like: "python main.py AMZN FB AAPL" or '
+              '"python --offline filename"')
         sys.exit(1)
     if "--offline" in sys.argv[1]:
         try:
