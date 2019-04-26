@@ -43,7 +43,6 @@ class FairPriceCalc:
     def _calculate_implied_discount_rate(self):
         """Calculate the discount rate with the Gordon Growth Model"""
         # https://www.investopedia.com/terms/g/gordongrowthmodel.asp
-
         implied_discount_rates = dict()
         tickers_to_analyze = list(self._dividend_data.keys())
         for ticker in tickers_to_analyze:
