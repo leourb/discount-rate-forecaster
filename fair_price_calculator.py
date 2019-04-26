@@ -16,6 +16,7 @@ class FairPriceCalc:
         :param float market_return: the 1-year market return for the Stock Index
         :param float risk_free_rate: risk-free rate of return on a 10-year Govt Bond
         """
+        # Model input and data.csv input as of Apr 22nd
         self._dividend_data = json_tickers_data
         self._market_return = market_return  # https://www.msci.com/documents/10199/67a768a1-71d0-4bd0-8d7e-f7b53e8d0d9f
         # 3-Year Compounded Result
