@@ -6,7 +6,7 @@ from utils import Utils
 
 
 class FairPriceCalc:
-    """Calculates the fair price for the selected tickers"""
+    """Calculate the fair price for the selected tickers"""
 
     def __init__(self, json_tickers_data, market_return=29.93, risk_free_rate=2.56):
         """
