@@ -22,24 +22,24 @@ class DataDownloader:
         for ticker in self._tickers:
             self._ticker_being_processed = ticker
             print(f'Getting dividend data for ticker {ticker}...')
-            self._html_downloaded_table = self._parse_div_data_from_nasdaq(ticker)
+            self._html_downloaded_table = self._parse_div_data_from_dividata(ticker)
             if self._html_downloaded_table is not None:
                 self._results[self._ticker_being_processed] = self._build_json_table(self._html_downloaded_table)
                 time.sleep(2)  # We do not want to make the scraping too aggressive!
         if pickled_name is not None:
             self._write_data_to_pickle(pickled_name)
 
-    def _parse_div_data_from_nasdaq(self, ticker):  # Private function - it should not be called directly
+    def _parse_div_data_from_dividata(self, ticker):  # Private function - it should not be called directly
         """
-        Parse the data from NASDAQ.com and store it in memory
+        Parse the data from dividata.com and store it in memory
 
         :param: str ticker: ticker to be processed
         :return: a JSON Object with all the available data
         """
-        web_address = f'https://www.nasdaq.com/market-activity/stocks/{ticker.lower()}/dividend-history'
+        web_address = f'https://dividata.com/stock/{ticker.lower()}/dividend'
         downloaded_web_page = requests.get(web_address)
         soup = BeautifulSoup(downloaded_web_page.text, 'html.parser')
-        table = soup.find('table', {'id': 'quotes_content_left_dividendhistoryGrid'})
+        table = soup.find("table", class_="table table-striped table-hover")
         try:
             parsed_table = self._get_table_data(table)
         except AttributeError:
@@ -54,8 +54,6 @@ class DataDownloader:
         :param bs4.element.Tag table_object: BS4 Table Object
         :return: a dictionary with headers and rows lists as properties
         """
-        table_headers_tags = table_object.findAll('a')
-        table_headers_text = [i.text for i in table_headers_tags]
         table_rows = table_object.findAll('tr')
         output_rows = list()
         for table_row in table_rows:
@@ -66,8 +64,21 @@ class DataDownloader:
             if not output_row:
                 continue
             output_rows.append(output_row)
-        table_data = {'headers': table_headers_text, 'rows': output_rows}
+        table_data = {'headers': ["Ex-Dividend Date", "Dividend Amount"], 'rows': output_rows}
         return table_data
+
+    def __remove_dollar_sign(self, row_list):
+        """
+        Remove the Dollar sign implicitly converting the amount in numbers
+        :param row_list: list of rows with format [Ex-Div Date, Amount]
+        :return: a list of rows with the same format in input and a numeric amount
+        """
+        for row in row_list:
+            try:
+                row[1] = row[1].split("$")[1]
+            except IndexError:
+                row[1] = 0
+        return row_list
 
     def _build_json_table(self, parsed_table_data):
         """
@@ -77,7 +88,7 @@ class DataDownloader:
         :return: a converted JSON object
         """
         headers = parsed_table_data.get('headers', {})
-        rows = parsed_table_data.get('rows', {})
+        rows = self.__remove_dollar_sign(parsed_table_data.get('rows', {}))
         json_results = [dict(zip(headers, row)) for row in rows]
         return json_results
 
