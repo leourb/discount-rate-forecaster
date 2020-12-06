@@ -36,7 +36,7 @@ class DataDownloader:
         :param: str ticker: ticker to be processed
         :return: a JSON Object with all the available data
         """
-        web_address = f'https://www.nasdaq.com/en/symbol/{ticker.lower()}/dividend-history'
+        web_address = f'https://www.nasdaq.com/market-activity/stocks/{ticker.lower()}/dividend-history'
         downloaded_web_page = requests.get(web_address)
         soup = BeautifulSoup(downloaded_web_page.text, 'html.parser')
         table = soup.find('table', {'id': 'quotes_content_left_dividendhistoryGrid'})
