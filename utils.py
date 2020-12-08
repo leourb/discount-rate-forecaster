@@ -10,7 +10,7 @@ import pandas as pd
 
 
 class YahooFinanceDownloader:
-    """Downloads the last N years of data from Yahoo! Finance"""
+    """Download data from Yahoo! Finance from the start_date to the end_date"""
 
     def __init__(self, ticker, start_date, end_date=None):
         """
