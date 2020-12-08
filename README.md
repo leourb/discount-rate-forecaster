@@ -1,17 +1,12 @@
-# What this script does
+# Abstract
 
-The script scrapes dividends data from Nasdaq.com, standardize it and then calculates the
-*market implied discount rate* using the _Gordon Growth Model_.
+This is an implementation of the [Gordon Growth Model](https://en.wikipedia.org/wiki/Dividend_discount_model) which
+presumes that a fair price of a stock is the expected value of their cash-flows (i.e. of their dividends).
 
-The higher the discount rate, the higher the risk but higher is the expected return (as this implies market data is a remunerated return).
+The data comes from:
 
+1. Dividend Data: [DiviData](https://dividata.com/)
+2. Timeseries: [Yahoo! Finance](https://finance.yahoo.com/)
 
 # Usage
 
-List of allowable tickers: [!https://www.nasdaq.com/quotes/nasdaq-100-stocks.aspx](here)
-
-`python main.py AAPL` to get the analysis for a single ticker
-
-`python main.py AAPL AMZN FB` ti get the analysis for multiple tickers. There is no limit on the number of tickers in input.
-
-`python main.py --offline name_of_the_pickle_file` to work with offline data (the pickle file is automatically generated at each online query)
