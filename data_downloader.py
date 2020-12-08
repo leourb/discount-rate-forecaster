@@ -1,8 +1,8 @@
 """Download the data from Nasdaq.com and convert it to JSON"""
 
+import dateparser
 import pickle
 import requests
-import time
 
 import pandas as pd
 
@@ -12,21 +12,18 @@ from bs4 import BeautifulSoup
 class DataDownloader:
     """Download the data from NASDAQ.com and save it as a pickle"""
 
-    def __init__(self, tickers, pickled_name=None):
+    def __init__(self, ticker, pickled_name=None):
         """
         Initialize the class with the input parameters
-        :param (str|list) tickers: ticker to download and to collect the data from
+        :param str ticker: ticker to download and to collect the data from
         :param str pickled_name: name of the pickled_file to be processed
         """
-        self.__tickers = tickers
-        self.__results = dict()
-        for ticker in self.__tickers:
-            self.__ticker_being_processed = ticker
-            print(f'Getting dividend data for ticker {ticker}...')
-            self.__html_downloaded_table = self.__parse_div_data_from_dividata(ticker)
-            if self.__html_downloaded_table is not None:
-                self.__results[self.__ticker_being_processed] = self.__build_json_table(self.__html_downloaded_table)
-                time.sleep(2)  # We do not want to make the scraping too aggressive!
+        self.__ticker = ticker
+        self.__results = None
+        print(f'Getting dividend data for ticker {ticker}...')
+        self.__html_downloaded_table = self.__parse_div_data_from_dividata(ticker)
+        if self.__html_downloaded_table is not None:
+            self.__results = self.__build_json_table(self.__html_downloaded_table)
         if pickled_name is not None:
             self.__write_data_to_pickle(pickled_name)
 
@@ -68,15 +65,16 @@ class DataDownloader:
         table_data = {'headers': ["Ex-Dividend Date", "Dividend Amount"], 'rows': output_rows}
         return table_data
 
-    def __remove_dollar_sign(self, row_list):
+    def __format_table_content(self, row_list):
         """
-        Remove the Dollar sign implicitly converting the amount in numbers
+        Remove the Dollar sign implicitly converting the amount in numbers and converts the dates to datetime
         :param row_list: list of rows with format [Ex-Div Date, Amount]
         :return: a list of rows with the same format in input and a numeric amount
         :rtype: list
         """
         for row in row_list:
             try:
+                row[0] = dateparser.parse(row[0])
                 row[1] = row[1].split("$")[1]
             except IndexError:
                 row[1] = 0
@@ -90,7 +88,7 @@ class DataDownloader:
         :rtype: list
         """
         headers = parsed_table_data.get('headers', {})
-        rows = self.__remove_dollar_sign(parsed_table_data.get('rows', {}))
+        rows = self.__format_table_content(parsed_table_data.get('rows', {}))
         json_results = [dict(zip(headers, row)) for row in rows]
         return json_results
 
@@ -117,7 +115,4 @@ class DataDownloader:
         :return: converted DataFrame results
         :rtype: list
         """
-        list_of_results = dict()
-        for i in list(self.__results.keys()):
-            list_of_results[i] = pd.DataFrame(self.__results[i])
-        return list_of_results
+        return pd.DataFrame(self.__results)
