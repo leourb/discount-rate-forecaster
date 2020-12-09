@@ -2,25 +2,21 @@
 
 import numpy as np
 
-from utils import Utils
+from utils import YahooFinanceDownloader
 
 
 class FairPriceCalc:
     """Calculate the fair price for the selected tickers"""
 
-    def __init__(self, json_tickers_data, market_return=29.93, risk_free_rate=2.56):
+    def __init__(self, json_tickers_data):
         """
         Initialize the class parsing the input
 
         :param dict json_tickers_data: JSON object with the data results
-        :param float market_return: the 1-year market return for the Stock Index
-        :param float risk_free_rate: risk-free rate of return on a 10-year Govt Bond
         """
-        # Model input and data.csv input as of Apr 22nd
         self._dividend_data = json_tickers_data
-        self._market_return = market_return  # https://www.msci.com/documents/10199/67a768a1-71d0-4bd0-8d7e-f7b53e8d0d9f
-        # 3-Year Compounded Result
-        self._rf = risk_free_rate  # https://www.bloomberg.com/markets/rates-bonds/government-bonds/us
+        self._market_return =
+        self._rf = input("Enter the Risk-Free rate: ")
         self.dividend_stats = self._calculate_dividend_stats()
         self._market_data = Utils.import_csv_data('data.csv')
         self.results = self._calculate_implied_discount_rate()
