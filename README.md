@@ -1,3 +1,5 @@
+<div style="text-align: justify">
+
 # Abstract
 
 This is an implementation of the [Gordon Growth Model](https://en.wikipedia.org/wiki/Dividend_discount_model) which
@@ -91,3 +93,4 @@ minus the perpetuity growth of dividends.
     - Dividend yield is too low;
     - Dividend are paid are not constant;
     - The estimation of parameters (_g_ and _r_) makes the output, sometimes, surrealistic;
+</div>
