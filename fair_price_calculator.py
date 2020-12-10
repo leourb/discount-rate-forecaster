@@ -2,76 +2,79 @@
 
 import numpy as np
 
-from utils import YahooFinanceDownloader
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+from utils import CalculateInputs
 
 
 class FairPriceCalc:
     """Calculate the fair price for the selected tickers"""
 
-    def __init__(self, json_tickers_data):
+    def __init__(self, ticker):
         """
         Initialize the class parsing the input
-
-        :param dict json_tickers_data: JSON object with the data results
+        :param str ticker: ticker of the company for which to estimate the fair price
         """
-        self._dividend_data = json_tickers_data
-        self._market_return =
-        self._rf = input("Enter the Risk-Free rate: ")
-        self.dividend_stats = self._calculate_dividend_stats()
-        self._market_data = Utils.import_csv_data('data.csv')
-        self.results = self._calculate_implied_discount_rate()
+        self.__inputs = CalculateInputs(ticker)
+        self.__dividend_data = self.__inputs.get_dividend_data()
+        self.__dividend_growth = self.__inputs.get_dividend_growth()
+        self.__rf = self.__inputs.get_risk_free_return()
+        self.__market_return = self.__inputs.get_market_return()
+        self.__market_data = self.__inputs.get_market_data()
+        self.__ticker_data = self.__inputs.get_ticker_data()
+        self.__regression_results = self.__perform_regression()
+        self.__roe = self.__estimate_roe_with_capm()
+        self.dividend_stats = self.__inputs.get_dividend_stats()
+        self.fair_price = self.__calculates_future_price()
 
-    def _calculate_dividend_stats(self):
-        """Calculate the dividend stats of the JSON data"""
+    def __perform_regression(self):
+        """
+        Calculate the Beta to then estimate the value of the ROE using the CAPM
+        :return: a dictionary with the statistics of the regression
+        :rtype: dict
+        """
+        results = dict()
+        mkt_data = self.__inputs.get_market_data()
+        stock_data = self.__inputs.get_ticker_data()
+        mkt_data["Log Price"] = np.log(mkt_data["Adj Close"])
+        stock_data["Log Price"] = np.log(stock_data["Adj Close"])
+        mkt_data["Log Returns"] = mkt_data["Log Price"] - mkt_data["Log Price"].shift(1)
+        stock_data["Log Returns"] = stock_data["Log Price"] - stock_data["Log Price"].shift(1)
+        mkt_data["Log Returns"].fillna(method='bfill', inplace=True)
+        mkt_data["Log Returns"].fillna(method='ffill', inplace=True)
+        stock_data["Log Returns"].fillna(method='bfill', inplace=True)
+        stock_data["Log Returns"].fillna(method='ffill', inplace=True)
+        mkt_x = np.vstack(mkt_data["Log Returns"].values)
+        mkt_x_train = mkt_x[:-20]
+        mkt_x_test = mkt_x[-20:]
+        stock_y_train = stock_data["Log Returns"].values[:-20]
+        stock_y_test = stock_data["Log Returns"].values[-20:]
+        regr = LinearRegression()
+        regr.fit(mkt_x_train, stock_y_train)
+        stock_y_pred = regr.predict(mkt_x_test)
+        results["beta"] = regr.coef_[0]
+        results["r2"] = r2_score(stock_y_test, stock_y_pred)
+        results["mse"] = mean_squared_error(stock_y_test, stock_y_pred)
+        return results
 
-        stats = dict()
-        for ticker in self._dividend_data:
-            dividend_list = list()
-            if self._dividend_data[ticker] is not None:
-                for record in self._dividend_data[ticker]:
-                    dividend_list.append(float(record.get('Cash Amount')))
-            if dividend_list:
-                stats[ticker] = dict()
-                stats[ticker]['mean'] = np.mean(dividend_list)
-                stats[ticker]['median'] = np.median(dividend_list)
-                stats[ticker]['variance'] = np.var(dividend_list)
-        return stats
+    def __estimate_roe_with_capm(self):
+        """
+        Estimates the ROE by using the CAPM model
+        :return: an estimate of the ROE calculated using the CAPM
+        :rtype: float
+        """
+        capm = self.__rf + self.__regression_results.get("beta", 0) * (self.__market_return - self.__rf)
+        return capm
 
-    def _calculate_implied_discount_rate(self):
-        """Calculate the discount rate with the Gordon Growth Model"""
+    def __calculates_future_price(self):
+        """
+        Calculate the discount rate with the Gordon Growth Model
+        :return: the value of the estimated future fair price
+        :rtype: float
+        """
         # https://www.investopedia.com/terms/g/gordongrowthmodel.asp
-        implied_discount_rates = dict()
-        tickers_to_analyze = list(self._dividend_data.keys())
-        for ticker in tickers_to_analyze:
-            model_inputs = self._extract_model_inputs(ticker)
-            expected_dividend = model_inputs['d'] * (1 + model_inputs['g'])
-            print(model_inputs)
-            if model_inputs.get('price') == 0:
-                impl_disc_rate = None
-            else:
-                impl_disc_rate = (expected_dividend + model_inputs.get('g', 0) * model_inputs.get('price', 0)
-                                  ) / model_inputs.get('price', 0)
-            implied_discount_rates[ticker] = impl_disc_rate
-        return implied_discount_rates
-
-    def _extract_model_inputs(self, ticker):
-        """
-        Make some data manipulation to extract clean model inputs
-
-        :param str ticker: ticker being analyzed
-        :return: a dictionary with all the clean inputs
-        """
-        gordon_growth_model_inputs = dict()
-        try:
-            gordon_growth_model_inputs['g'] = float(self._market_data.get(ticker, {}).get('g', 0)) / 100
-            gordon_growth_model_inputs['price'] = float(self._market_data.get(ticker, {}).get('price', 0))
-            gordon_growth_model_inputs['beta'] = float(self._market_data.get(ticker, {}).get('beta', 0))
-        except ValueError:
-            print(f'Invalid inputs for ticker {ticker}. Impossible to estimate fair price.')
-            gordon_growth_model_inputs['g'] = 0  # Zero-out the GGM
-            gordon_growth_model_inputs['price'] = 0
-        if self._dividend_data.get(ticker) is not None:
-            gordon_growth_model_inputs['d'] = float(self._dividend_data.get(ticker, {})[0].get('Cash Amount', {})) * 4
-        else:
-            gordon_growth_model_inputs['d'] = 0
-        return gordon_growth_model_inputs
+        yearly_dividend = float(self.__dividend_data["Dividend Amount"].head(4).sum())
+        expected_dividend = yearly_dividend * (1 + self.__dividend_growth)
+        fair_price = expected_dividend / (self.__roe - self.__dividend_growth)
+        return fair_price
