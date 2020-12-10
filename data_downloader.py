@@ -12,8 +12,8 @@ import pandas as pd
 from bs4 import BeautifulSoup
 
 
-class DataDownloader:
-    """Download the data from NASDAQ.com and save it as a pickle"""
+class DividendDataDownloader:
+    """Download the data from Dividata.com and save it as a pickle"""
 
     def __init__(self, ticker, pickled_name=None):
         """
@@ -78,7 +78,7 @@ class DataDownloader:
         for row in row_list:
             try:
                 row[0] = dateparser.parse(row[0])
-                row[1] = row[1].split("$")[1]
+                row[1] = float(row[1].split("$")[1])
             except IndexError:
                 row[1] = 0
         return row_list
@@ -116,7 +116,7 @@ class DataDownloader:
         """
         Get the results in a DataFrame format
         :return: converted DataFrame results
-        :rtype: list
+        :rtype: pd.DataFrame
         """
         return pd.DataFrame(self.__results)
 
@@ -127,7 +127,7 @@ class YahooFinanceDownloader:
     def __init__(self, ticker, start_date, end_date=None):
         """
         Initialize the class with the given input
-        :param str or list ticker: single ticker or list of tickers to use to download the data from Yahoo! Finance
+        :param str ticker: single ticker or list of tickers to use to download the data from Yahoo! Finance
         :param str start_date: start date of the query period in a string format YYYY-MM-DD (or similar)
         :param str end_date: end date of the query period in a string format YYYY-MM-DD (or similar)
         """
