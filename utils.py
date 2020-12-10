@@ -9,7 +9,10 @@ class CalculateInputs:
     """Calculates the inputs to be passed in other modules"""
 
     def __init__(self, ticker):
-        """Initialize the class"""
+        """
+        Initialize the class
+        :param str ticker: ticker of the stock to download the data
+        """
         self.__today = (datetime.today() - timedelta(days=365)).strftime("%Y-%m-%d")
         self.__index_data = YahooFinanceDownloader("^GSPC", self.__today).get_parsed_results()
         self.__risk_free_data = YahooFinanceDownloader("^TNX", self.__today).get_parsed_results()
