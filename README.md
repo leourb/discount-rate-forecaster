@@ -1,5 +1,3 @@
-<div style="text-align: justify">
-
 # Abstract
 
 This is an implementation of the [Gordon Growth Model](https://en.wikipedia.org/wiki/Dividend_discount_model) which
@@ -78,6 +76,7 @@ estimate the fair price.
 
 ![img.png](img.png)
 
+<div style="text-align: justify">
 The Gordon Growth Model (GGM) is one of the models used as fair price estimator. The main concept is that a fair 
 price (which is <u>usually</u> **different** from the <u>market price</u>) can be calculated as a perpetuity of the
 expected dividend (i.e. the dividend for the next year) remunerated at the Cost of Capital, estimated with the CAPM, 
