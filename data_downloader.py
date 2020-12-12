@@ -30,10 +30,10 @@ class DividendDataDownloader:
         if pickled_name is not None:
             self.__write_data_to_pickle(pickled_name)
 
-    def __parse_div_data_from_dividata(self, ticker):  # Private function - it should not be called directly
+    def __parse_div_data_from_dividata(self, ticker):
         """
         Parse the data from dividata.com and store it in memory
-        :param: str ticker: ticker to be processed
+        :param str ticker: ticker to be processed
         :return: a JSON Object with all the available data
         :rtype: dict
         """
@@ -71,7 +71,7 @@ class DividendDataDownloader:
     def __format_table_content(self, row_list):
         """
         Remove the Dollar sign implicitly converting the amount in numbers and converts the dates to datetime
-        :param row_list: list of rows with format [Ex-Div Date, Amount]
+        :param list row_list: list of rows with format [Ex-Div Date, Amount]
         :return: a list of rows with the same format in input and a numeric amount
         :rtype: list
         """
@@ -174,7 +174,7 @@ class YahooFinanceDownloader:
     def __parse_results(self):
         """
         Parse results in a Pandas DF
-        :return: a DataFrame with the parsed resutls
+        :return: a DataFrame with the parsed results
         :rtype: pd.DataFrame
         """
         return pd.read_csv(BytesIO(self.__download_file().content))
