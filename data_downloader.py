@@ -25,9 +25,9 @@ class DividendDataDownloader:
         self.__results = None
         print(f'Getting dividend data for ticker {ticker}...')
         self.__html_downloaded_table = self.__parse_div_data_from_dividata(ticker)
-        if self.__html_downloaded_table is not None:
+        if self.__html_downloaded_table:
             self.__results = self.__build_json_table(self.__html_downloaded_table)
-        if pickled_name is not None:
+        if pickled_name:
             self.__write_data_to_pickle(pickled_name)
 
     def __parse_div_data_from_dividata(self, ticker):
