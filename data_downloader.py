@@ -35,7 +35,7 @@ class DividendDataDownloader:
         Parse the data from dividata.com and store it in memory
         :param str ticker: ticker to be processed
         :return: a JSON Object with all the available data
-        :rtype: dict
+        :rtype: dict or None
         """
         web_address = f'https://dividata.com/stock/{ticker.lower()}/dividend'
         downloaded_web_page = requests.get(web_address)
