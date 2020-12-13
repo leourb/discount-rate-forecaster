@@ -146,7 +146,7 @@ class YahooFinanceDownloader:
         :rtype: None
         """
         self.__start_date = dateparser.parse(self.__start_date).timestamp()
-        self.__end_date = dateparser.parse(self.__end_date).timestamp() if self.__end_date is not None \
+        self.__end_date = dateparser.parse(self.__end_date).timestamp() if self.__end_date \
             else datetime.today().timestamp()
 
     def __download_file(self):
