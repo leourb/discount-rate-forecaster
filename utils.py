@@ -18,7 +18,7 @@ class CalculateInputs:
         self.__risk_free_data = YahooFinanceDownloader("^TNX", self.__today).get_parsed_results()
         self.__ticker_data = YahooFinanceDownloader(ticker, self.__today).get_parsed_results()
         self.__index_return = self.__calculate_returns(self.__index_data)
-        self.__risk_free_return = float(self.__risk_free_data["Adj Close"].tail(1).values[0]) / 100
+        self.__risk_free_return = self.__calculate_risk_free_return()
         self.__dividend_data = DividendDataDownloader(ticker).get_results_as_df()
         self.__dividend_growth = self.__calculate_dividend_growth()
         self.__dividend_stats = self.__calculate_dividend_stats()
@@ -37,6 +37,16 @@ class CalculateInputs:
             print("Impossible to get return for the series.")
             security_return = 0
         return security_return
+
+    def __calculate_risk_free_return(self):
+        """
+        Calculate the risk-free return downloaded from Yahoo! Finance
+        :return: the value of the risk-free return
+        :rtype: float
+        """
+        self.__risk_free_data.fillna(method="ffill", inplace=True)
+        self.__risk_free_data.fillna(method="bfill", inplace=True)
+        return float(self.__risk_free_data["Adj Close"].tail(1).values[0]) / 100
 
     def __calculate_dividend_stats(self):
         """
