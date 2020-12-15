@@ -16,7 +16,7 @@ is sufficient to run it as described in `main.py`:
 ```python
 from fair_price_calculator import FairPriceCalc
 
-print(FairPriceCalc("AAPL").fair_price)
+print(FairPriceCalc("AAPL").get_estimated_fair_price())
 ```
 
 ## Modules
