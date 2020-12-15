@@ -1,0 +1,1 @@
+"""This module infers the parameters of the GGM from the merket price"""
