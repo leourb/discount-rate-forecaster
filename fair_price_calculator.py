@@ -25,8 +25,7 @@ class FairPriceCalc:
         self.__ticker_data = self.__inputs.get_ticker_data()
         self.__regression_results = self.__perform_regression()
         self.__roe = self.__estimate_roe_with_capm()
-        self.dividend_stats = self.__inputs.get_dividend_stats()
-        self.fair_price = self.__calculates_future_price()
+        self.__fair_price = self.__calculates_future_price()
 
     def __perform_regression(self):
         """
@@ -78,3 +77,35 @@ class FairPriceCalc:
         expected_dividend = yearly_dividend * (1 + self.__dividend_growth)
         fair_price = expected_dividend / (self.__roe - self.__dividend_growth)
         return fair_price
+
+    def get_inputs(self):
+        """
+        Return the inputs calculated by the CalculateInputs class
+        :return: a CalculateInputs class object
+        :rtype: CalculateInputs
+        """
+        return self.__inputs
+
+    def get_dividend_stats(self):
+        """
+        Return the calculated dividend stats
+        :return: a dictionary with the calculated stats
+        :rtype: dict
+        """
+        return self.__inputs.get_dividend_stats()
+
+    def get_estimated_fair_price(self):
+        """
+        Return the estimated fair price
+        :return: a value for the fair price
+        :rtype: float
+        """
+        return self.__fair_price
+
+    def get_estimated_roe(self):
+        """
+        Return the estimated ROE
+        :return: the calculated ROE
+        :rtype: float
+        """
+        return self.__roe
