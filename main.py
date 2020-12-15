@@ -1,6 +1,10 @@
 """Main module that executes the script"""
 
-from fair_price_calculator import FairPriceCalc
+from infer_parameters import InferParameters
+
+import pandas as pd
+
+pd.set_option('display.max_rows', None)
 
 if __name__ == "__main__":
-    print(FairPriceCalc("IBM").fair_price)
+    InferParameters("AAPL").infer_required_return_from_mkt_price()
