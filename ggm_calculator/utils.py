@@ -55,9 +55,10 @@ class CalculateInputs:
         :rtype: dict
         """
         stats = dict()
-        stats['mean'] = self.__dividend_data["Dividend Amount"].mean()
-        stats['median'] = self.__dividend_data["Dividend Amount"].median()
-        stats['std'] = self.__dividend_data["Dividend Amount"].std()
+        if not self.__dividend_data.empty:
+            stats['mean'] = self.__dividend_data["Dividend Amount"].mean()
+            stats['median'] = self.__dividend_data["Dividend Amount"].median()
+            stats['std'] = self.__dividend_data["Dividend Amount"].std()
         return stats
 
     def __calculate_dividend_growth(self):
@@ -66,9 +67,11 @@ class CalculateInputs:
         :return: the value of the growth of the last 4 dividends compared to last year
         :rtype: float
         """
-        this_year_dividend = float(self.__dividend_data["Dividend Amount"].head(4).sum())
-        last_year_dividend = float(self.__dividend_data["Dividend Amount"][5:9].sum())
-        g_rate = (this_year_dividend / last_year_dividend) - 1
+        g_rate = None
+        if not self.__dividend_data.empty:
+            this_year_dividend = float(self.__dividend_data["Dividend Amount"].head(4).sum())
+            last_year_dividend = float(self.__dividend_data["Dividend Amount"][5:9].sum())
+            g_rate = (this_year_dividend / last_year_dividend) - 1
         return g_rate
 
     def get_market_return(self):
