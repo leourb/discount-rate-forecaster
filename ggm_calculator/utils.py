@@ -2,7 +2,7 @@
 
 from datetime import datetime, timedelta
 
-from data_downloader import DividendDataDownloader, YahooFinanceDownloader
+from ggm_calculator.data_downloader import DividendDataDownloader, YahooFinanceDownloader
 
 
 class CalculateInputs:
