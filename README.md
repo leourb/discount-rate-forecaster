@@ -10,13 +10,25 @@ The data comes from:
 
 # Usage
 
-The script is pretty simple to run. In order to get the calculated fair price of the stock according to the model it 
-is sufficient to run it as described in `main.py`:
+## Installation
+
+You can simply install the file by running
+
+```commandline
+pip install ggm_calculator-1.0.0-py3-none-any.whl
+```
+
+Then simply call either class `FairPriceCalc` or `InferParameters` as:
 
 ```python
-from ggm_calculator.fair_price_calculator import FairPriceCalc
+from ggm_calculator import FairPriceCalc as fp
+from ggm_calculator import InferParameters as ip
+```
 
-print(FairPriceCalc("AAPL").get_estimated_fair_price())
+```python
+from ggm_calculator import FairPriceCalc as fp
+
+print(fp("AAPL").get_estimated_fair_price())
 ```
 
 ## Modules
@@ -74,7 +86,7 @@ estimate the fair price.
 
 ## Financial Considerations
 
-![img.png](img.png)
+![img.png](ggm_calculator/img.png)
 
 The Gordon Growth Model (GGM) is one of the models used as fair price estimator. The main concept is that a fair 
 price (which is <u>usually</u> **different** from the <u>market price</u>) can be calculated as a perpetuity of the
