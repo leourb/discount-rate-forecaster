@@ -1,6 +1,6 @@
 """This module infers the parameters of the GGM from the merket price"""
 
-from fair_price_calculator import FairPriceCalc
+from ggm_calculator.fair_price_calculator import FairPriceCalc
 
 
 class InferParameters:
@@ -13,12 +13,18 @@ class InferParameters:
         """
         self.__ticker = ticker
         self.__inputs = FairPriceCalc(self.__ticker)
+        if self.__inputs.get_estimated_fair_price() is None:
+            self.__infer_g = None
+            self.__infer_r = None
+            return None
         self.__last_price = self.__inputs.get_inputs().get_ticker_data().tail(1)["Adj Close"].values[0]
         self.__dividend_growth = self.__inputs.get_inputs().get_dividend_growth()
         self.__dividend_data = self.__inputs.get_inputs().get_dividend_data()
         self.__required_return = self.__inputs.get_estimated_roe()
+        self.__infer_g = self.__infer_growth_from_mkt_price()
+        self.__infer_r = self.__infer_required_return_from_mkt_price()
 
-    def infer_growth_from_mkt_price(self):
+    def __infer_growth_from_mkt_price(self):
         """
         Infer the growth g according to the Gordon Growth Model
         :return: the value of g
@@ -31,7 +37,7 @@ class InferParameters:
         print(f"Inputs: Price={self.__last_price}, r={self.__required_return}, D1={expected_dividend}")
         return growth
 
-    def infer_required_return_from_mkt_price(self):
+    def __infer_required_return_from_mkt_price(self):
         """
         Infer the required return r according to the Gordon Growth Model
         :return: the value of r
@@ -43,3 +49,19 @@ class InferParameters:
         print(f"The estimated required return for {self.__ticker} is {required_return}.")
         print(f"Inputs: Price={self.__last_price}, g={self.__dividend_growth}, D1={expected_dividend}")
         return required_return
+
+    def get_inferred_g(self):
+        """
+        Get the inferred g
+        :return: the value of g
+        :rtype: float
+        """
+        return self.__infer_g
+
+    def get_inferred_r(self):
+        """
+        Get the inferred r
+        :return: the value of r
+        :rtype: float
+        """
+        return self.__infer_r
