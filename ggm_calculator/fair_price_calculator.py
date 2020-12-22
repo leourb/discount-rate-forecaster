@@ -75,7 +75,8 @@ class FairPriceCalc:
         :return: the value of the estimated future fair price
         :rtype: float
         """
-        # https://www.investopedia.com/terms/g/gordongrowthmodel.asp
+        if self.__dividend_growth is None:
+            return None
         yearly_dividend = float(self.__dividend_data["Dividend Amount"].head(4).sum())
         expected_dividend = yearly_dividend * (1 + self.__dividend_growth)
         fair_price = expected_dividend / (self.__roe - self.__dividend_growth)
