@@ -44,7 +44,6 @@ class DividendDataDownloader:
         try:
             parsed_table = self.__get_table_data(table)
         except AttributeError:
-            print(f'It seems that {ticker} has never paid a dividend. Nothing to download.')
             return None
         return parsed_table
 
@@ -155,7 +154,6 @@ class YahooFinanceDownloader:
         :return: the downloaded content of the file
         :rtype: requests.models.Response
         """
-
         period1 = int(self.__start_date)
         period2 = int(self.__end_date)
         self.__url = f"https://query1.finance.yahoo.com/v7/finance/download/{self.__ticker}?period1=" \
