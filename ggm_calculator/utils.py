@@ -135,6 +135,6 @@ class CalculateInputs:
         """
         Get the downloaded dividend data
         :return: downloaded dividend data
-        :rtype: dict
+        :rtype: pd.DataFrame
         """
         return self.__dividend_data
