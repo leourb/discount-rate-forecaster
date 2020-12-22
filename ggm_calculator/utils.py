@@ -71,7 +71,8 @@ class CalculateInputs:
         if not self.__dividend_data.empty:
             this_year_dividend = float(self.__dividend_data["Dividend Amount"].head(4).sum())
             last_year_dividend = float(self.__dividend_data["Dividend Amount"][5:9].sum())
-            g_rate = (this_year_dividend / last_year_dividend) - 1
+            if last_year_dividend and this_year_dividend:
+                g_rate = (this_year_dividend / last_year_dividend) - 1
         return g_rate
 
     def get_market_return(self):
