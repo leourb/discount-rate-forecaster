@@ -19,7 +19,7 @@ class FairPriceCalc:
         self.__inputs = CalculateInputs(ticker)
         if self.__inputs.get_dividend_data().empty:
             self.__fair_price = None
-            return self.__fair_price
+            return
         self.__dividend_data = self.__inputs.get_dividend_data()
         self.__dividend_growth = self.__inputs.get_dividend_growth()
         self.__rf = self.__inputs.get_risk_free_return()
