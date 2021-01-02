@@ -13,7 +13,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     include_package_data=True,
-    url="https://github.com/leourb/discount-rate-forecaster",
+    url="https://github.com/leourb/gordon-growth-model",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
